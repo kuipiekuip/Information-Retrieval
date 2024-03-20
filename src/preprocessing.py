@@ -20,7 +20,7 @@ def clean_document(page : requests.models.Response):
     return remove_punctuation(body_text).lower()
 
 def remove_punctuation(text : str) -> str:
-    return re.sub(r'[^\w\s\W]|(?<!\w)\W|\W(?!\w)', '', text)
+    return str(re.sub(r'[^\s\w](?![\w])|(?<![\w])[^\s\w]|^[^\s\w]|[^\s\w]$', '', text))
 
 url_list = ["https://nos.nl/artikel/2513343-unilever-schrapt-7500-banen-en-zet-ijsjes-in-de-etalage", 
             "https://nos.nl/artikel/2513359-trump-krijgt-borgsom-van-454-miljoen-dollar-niet-rond-onmogelijke-opdracht",
