@@ -155,6 +155,38 @@ def k_nearest_neighbors(Cexp, terms, similarity_matrix, k, l, r=5):
     
     return NN
 
+def sum_product_weights(term_t, term_q, document_term_weights):
+    """
+    Calculate the sum of the products of weights for two terms across all documents.
+    
+    :param term_t: The first term for which to calculate the weight product.
+    :param term_q: The second term for which to calculate the weight product.
+    :param document_term_weights: A list of dictionaries, each representing term weights for a document.
+    :return: The sum of the product of weights for term_i and term_j across all documents.
+    """
+    sum_product = 0  # Initialize the sum of products to zero
+    for doc_weights in document_term_weights:  # Loop over each document's term weights (j in the equation)
+        weight_t = doc_weights.get(term_t, 0)  # Get the weight for term_t in the document, default to 0 if not found
+        weight_q = doc_weights.get(term_q, 0)  # Get the weight for term_q in the document, default to 0 if not found
+        sum_product += weight_t * weight_q  # Multiply the weights and add to the sum
+    return sum_product  # Return the total sum of products
+
+def correlation_score(candidate_query_term, query_set, document_term_weights):
+    """
+    Calculate the correlation score of a candidate query term with respect to a set of query terms.
+    
+    :param candidate_query_term: The candidate term for which to calculate the correlation score.
+    :param query_set: The set of original query terms to compare against.
+    :param document_term_weights: A list of dictionaries, each representing term weights for a document.
+    :return: The correlation score of the candidate term with the query set.
+    """
+    sum_correlation = 0  # Initialize the sum of correlations to zero
+    for query in query_set:  # Loop over each term in the query set
+        # Calculate the sum of the product of weights for the candidate term and the current query term across all documents
+        sum_correlation += sum_product_weights(candidate_query_term, query, document_term_weights)
+    
+    # Divide the total sum of correlations by the number of terms in the query set to get the average
+    return sum_correlation / len(query_set) 
 
 if __name__ == "__main__":
     # Define the corpus
@@ -179,4 +211,6 @@ if __name__ == "__main__":
     term_vectors = create_term_vectors(tw)
     terms, similarity_matrix = compute_cosine_similarities(term_vectors)
 
-    print(k_nearest_neighbors(compute_tfidf_and_select_top_terms(documents), terms, similarity_matrix, 10, 100, r=5))
+    print(k_nearest_neighbors(compute_tfidf_and_select_top_terms(documents), terms, similarity_matrix, 10, 100, r=5)) #Alg. 1 of the literature work
+
+    print(correlation_score("pride", {"novel", "fables", "alice"}, tw)) #Eq. 5 of the literature work
