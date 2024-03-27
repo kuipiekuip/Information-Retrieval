@@ -171,22 +171,31 @@ def sum_product_weights(term_t, term_q, document_term_weights):
         sum_product += weight_t * weight_q  # Multiply the weights and add to the sum
     return sum_product  # Return the total sum of products
 
-def correlation_score(candidate_query_term, query_set, document_term_weights):
+def correlation_score_single(candidate_query_term, reference_query_set, document_term_weights): #Eq. 5 of the literature work
     """
-    Calculate the correlation score of a candidate query term with respect to a set of query terms.
+    Calculate the correlation score of a single candidate query term with respect to a reference set of query terms.
     
     :param candidate_query_term: The candidate term for which to calculate the correlation score.
-    :param query_set: The set of original query terms to compare against.
+    :param reference_query_set: The reference set of query terms to compare against.
     :param document_term_weights: A list of dictionaries, each representing term weights for a document.
-    :return: The correlation score of the candidate term with the query set.
+    :return: The correlation score of the candidate term with the reference query set.
     """
     sum_correlation = 0  # Initialize the sum of correlations to zero
-    for query in query_set:  # Loop over each term in the query set
-        # Calculate the sum of the product of weights for the candidate term and the current query term across all documents
-        sum_correlation += sum_product_weights(candidate_query_term, query, document_term_weights)
-    
-    # Divide the total sum of correlations by the number of terms in the query set to get the average
-    return sum_correlation / len(query_set) 
+    for reference_term in reference_query_set:  # Loop over each term in the reference query set
+        # Calculate the sum of the product of weights for the candidate term and the reference term across all documents
+        sum_correlation += sum_product_weights(candidate_query_term, reference_term, document_term_weights)
+    # Divide the total sum of correlations by the number of terms in the reference query set to get the average
+    return sum_correlation / len(reference_query_set)
+
+def sort_by_correlation(candidate_query_terms_set, reference_query_set, document_term_weights):
+    # Now the candidate_query_terms is expected to be a set, not a list
+    correlation_scores = [(term, correlation_score_single(term, reference_query_set, document_term_weights)) 
+                          for term in candidate_query_terms_set]
+    # Sort the candidate terms by their correlation scores in descending order
+    sorted_terms = sorted(correlation_scores, key=lambda x: x[1], reverse=True)
+    # Return the sorted list of terms (without scores)
+    return [term for term, score in sorted_terms]
+
 
 if __name__ == "__main__":
     # Define the corpus
@@ -211,6 +220,17 @@ if __name__ == "__main__":
     term_vectors = create_term_vectors(tw)
     terms, similarity_matrix = compute_cosine_similarities(term_vectors)
 
-    print(k_nearest_neighbors(compute_tfidf_and_select_top_terms(documents), terms, similarity_matrix, 10, 100, r=5)) #Alg. 1 of the literature work
 
-    print(correlation_score("pride", {"novel", "fables", "alice"}, tw)) #Eq. 5 of the literature work
+    knn_scores = k_nearest_neighbors(compute_tfidf_and_select_top_terms(documents), terms, similarity_matrix, 10, 100, r=5)
+
+    print(knn_scores) #Alg. 1 of the literature work
+
+    knn_terms = {term for term, score in knn_scores}
+
+    print(knn_terms)
+
+    candidate_terms_set = knn_terms  # knn terms to be weighted
+    reference_terms_set = {"novel", "fables", "alice"}  # Original Query Set
+    
+    sorted_candidate_terms = sort_by_correlation(candidate_terms_set, reference_terms_set, tw)
+    print(sorted_candidate_terms)
