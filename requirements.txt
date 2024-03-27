@@ -2,3 +2,4 @@ beautifulsoup4==4.12.3
 requests==2.27.1
 numpy
 scikit-learn
+python-terrier==0.10.0
