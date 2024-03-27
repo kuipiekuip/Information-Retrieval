@@ -206,6 +206,7 @@ def run_query_expansion(corpus, original_query, M=100, k=10, l=100, r=5):
     terms, similarity_matrix = compute_cosine_similarities(term_vectors)
     # Run the k-Nearest Neighbors algorithm to select expansion terms
     knn_scores = k_nearest_neighbors(top_m_terms, terms, similarity_matrix, k, l, r)
+    print(knn_scores)
     # Extract the terms from the k-NN scores
     knn_terms = {term for term, score in knn_scores}
     # Perform query expansion using the k-NN terms and the original query terms
