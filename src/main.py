@@ -1,7 +1,7 @@
 from geturl import GetURLs
 
 def main():
-    list = GetURLs("computer system", 10, False)
+    list = GetURLs("software", 5, True)
     print(list)
 
 
