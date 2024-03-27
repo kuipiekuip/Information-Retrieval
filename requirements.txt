@@ -1,2 +1,4 @@
 beautifulsoup4==4.12.3
 requests==2.27.1
+numpy
+scikit-learn
