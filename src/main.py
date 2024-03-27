@@ -1,5 +1,6 @@
 from geturl import GetURLs
 from preprocessing import download_all_documents, clean_all_documents
+from vectorizer import run_query_expansion
 
 def main():
     list = GetURLs("software", 5, True)

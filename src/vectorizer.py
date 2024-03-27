@@ -195,6 +195,22 @@ def sort_by_correlation(candidate_query_terms_set, reference_query_set, document
     # Return the sorted list of terms (without scores)
     return [term for term, score in sorted_terms]
 
+def run_query_expansion(corpus, M=100, k=10, l=100, r=5):
+    # Compute the top M terms using TF-IDF
+    top_m_terms = compute_tfidf_and_select_top_terms(corpus, M)
+    # Calculate custom weights for terms in each document
+    document_term_weights = calculate_custom_weights(corpus)
+    # Create term vectors for all terms in the document collection
+    term_vectors = create_term_vectors(document_term_weights)
+    # Compute cosine similarities between all pairs of term vectors
+    terms, similarity_matrix = compute_cosine_similarities(term_vectors)
+    # Run the k-Nearest Neighbors algorithm to select expansion terms
+    knn_scores = k_nearest_neighbors(top_m_terms, terms, similarity_matrix, k, l, r)
+    # Extract the terms from the k-NN scores
+    knn_terms = {term for term, score in knn_scores}
+    # Perform query expansion using the k-NN terms and the original query terms
+    sorted_candidate_terms = sort_by_correlation(knn_terms, {"novel", "fables", "alice"}, document_term_weights)
+    return sorted_candidate_terms
 
 if __name__ == "__main__":
     # Define the corpus
@@ -204,22 +220,24 @@ if __name__ == "__main__":
         "Moby-Dick; or, The Whale is an 1851 novel by American writer Herman Melville. The book is the sailor Ishmael's narrative of the obsessive quest of Ahab, captain of the whaling ship Pequod, for revenge on Moby Dick, the giant white sperm whale that on the ship's previous voyage bit off Ahab's leg at the knee."
     ]
 
-    tw = calculate_custom_weights(documents)
+    print(run_query_expansion(corpus=documents))
 
-    term_vectors = create_term_vectors(tw)
-    terms, similarity_matrix = compute_cosine_similarities(term_vectors)
+    # tw = calculate_custom_weights(documents)
+
+    # term_vectors = create_term_vectors(tw)
+    # terms, similarity_matrix = compute_cosine_similarities(term_vectors)
 
 
-    knn_scores = k_nearest_neighbors(compute_tfidf_and_select_top_terms(documents), terms, similarity_matrix, 10, 100, r=5)
+    # knn_scores = k_nearest_neighbors(compute_tfidf_and_select_top_terms(documents), terms, similarity_matrix, 10, 100, r=5)
 
-    print(knn_scores) #Alg. 1 of the literature work
+    # print(knn_scores) #Alg. 1 of the literature work
 
-    knn_terms = {term for term, score in knn_scores}
+    # knn_terms = {term for term, score in knn_scores}
 
-    print(knn_terms)
+    # print(knn_terms)
 
-    candidate_terms_set = knn_terms  # knn terms to be weighted
-    reference_terms_set = {"novel", "fables", "alice"}  # Original Query Set
+    # candidate_terms_set = knn_terms  # knn terms to be weighted
+    # reference_terms_set = {"novel", "fables", "alice"}  # Original Query Set
     
-    sorted_candidate_terms = sort_by_correlation(candidate_terms_set, reference_terms_set, tw)
-    print(sorted_candidate_terms)
+    # sorted_candidate_terms = sort_by_correlation(candidate_terms_set, reference_terms_set, tw)
+    # print(sorted_candidate_terms)
