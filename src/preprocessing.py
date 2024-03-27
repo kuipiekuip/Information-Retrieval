@@ -33,4 +33,4 @@ url_list = ["https://nos.nl/artikel/2513343-unilever-schrapt-7500-banen-en-zet-i
 
 page_list = download_all_documents(url_list)
 text_list = clean_all_documents(page_list)
-print(text_list)
+#print(text_list)

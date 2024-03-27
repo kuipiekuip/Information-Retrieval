@@ -195,7 +195,7 @@ def sort_by_correlation(candidate_query_terms_set, reference_query_set, document
     # Return the sorted list of terms (without scores)
     return [term for term, score in sorted_terms]
 
-def run_query_expansion(corpus, M=100, k=10, l=100, r=5):
+def run_query_expansion(corpus, original_query, M=100, k=10, l=100, r=5):
     # Compute the top M terms using TF-IDF
     top_m_terms = compute_tfidf_and_select_top_terms(corpus, M)
     # Calculate custom weights for terms in each document
@@ -209,7 +209,7 @@ def run_query_expansion(corpus, M=100, k=10, l=100, r=5):
     # Extract the terms from the k-NN scores
     knn_terms = {term for term, score in knn_scores}
     # Perform query expansion using the k-NN terms and the original query terms
-    sorted_candidate_terms = sort_by_correlation(knn_terms, {"novel", "fables", "alice"}, document_term_weights)
+    sorted_candidate_terms = sort_by_correlation(knn_terms, original_query, document_term_weights)
     return sorted_candidate_terms
 
 if __name__ == "__main__":
