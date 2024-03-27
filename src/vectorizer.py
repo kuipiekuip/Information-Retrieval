@@ -205,16 +205,6 @@ if __name__ == "__main__":
         "Moby-Dick; or, The Whale is an 1851 novel by American writer Herman Melville. The book is the sailor Ishmael's narrative of the obsessive quest of Ahab, captain of the whaling ship Pequod, for revenge on Moby Dick, the giant white sperm whale that on the ship's previous voyage bit off Ahab's leg at the knee."
     ]
 
-    # alice_text = "Your Alice novel goes here."
-    # novel_text = "Your Novel text goes here."
-    # documents = [alice_text, novel_text]
-
-    # top_m_terms = compute_tfidf_and_select_top_terms(documents, M=55)
-    # print(top_m_terms)
-    # # Print the top M terms and their scores
-    # for term, score in top_m_terms:
-    #     print(term, score)
-
     tw = calculate_custom_weights(documents)
 
     term_vectors = create_term_vectors(tw)
