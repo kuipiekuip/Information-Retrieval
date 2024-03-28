@@ -1,13 +1,16 @@
 import pyterrier as pt
 import pandas as pd
 from pyterrier.measures import RR, nDCG, MAP
+from datasets import load_dataset
 
+def run_evaluation(dataset):
+    # dataset = pt.get_dataset(dataset_name) 
 
-def run_evaluation(dataset_name : str):
-    dataset = pt.get_dataset(dataset_name) 
     default_queries = dataset.get_topics()
+
     dummy_df = default_queries.copy() # This is where we read in our own query expansions
     dummy_df['query'] = 'some query'
+
     expanded_regular_queries = dummy_df
     expanded_news_queries = dummy_df
 
@@ -33,8 +36,30 @@ def evaluation(dataset, topics : pd.DataFrame) -> pd.DataFrame:
 if not pt.started():
     pt.init()
 
+# docs = load_dataset('irds/nyt', 'docs')
+# for record in docs:
+#         print(record)
 
-default, regular, news = run_evaluation("vaswani")
+
+# dataset = pt.datasets.get_dataset('irds:cord19/fulltext/trec-covid')
+# print(dataset.get_topics())
+# print(dataset.get_qrels())
+# for document in dataset.get_corpus_iter():
+    # print(document)
+
+
+dataset = pt.datasets.get_dataset('irds:nyt/trec-core-2017')
+# print(dataset.get_topics())
+# print(dataset.get_qrels())
+for document in dataset.get_corpus_iter():
+    print(document)
+    
+
+default, regular, news = run_evaluation(dataset)
 print(default)
 print(regular)
 print(news)
+
+# 3 queries, 1-3 datasets, 1-3 weighting models
+
+# DataFrame['qid','query] -> for each query we find all urls -> for all urls we retrieve the text -> we do the magic -> create expanded -> DataFrrame['qid','query']
