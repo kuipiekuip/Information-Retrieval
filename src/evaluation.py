@@ -1,7 +1,6 @@
 import pyterrier as pt
 import pandas as pd
 from pyterrier.measures import RR, nDCG, MAP
-from datasets import load_dataset
 
 def run_evaluation(dataset):
     # dataset = pt.get_dataset(dataset_name) 
