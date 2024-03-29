@@ -2,24 +2,10 @@ import pyterrier as pt
 import pandas as pd
 from pyterrier.measures import RR, nDCG, MAP
 
-def run_evaluation():
+def run_evaluation(topics : pd.DataFrame):
     dataset = pt.datasets.get_dataset('irds:nyt/trec-core-2017')
-    queries = dataset.get_topics()
-    queries.rename(columns={'title': 'query'}, inplace=True)
-    print(queries.dtypes)
     index_ref = pt.IndexRef.of('./indices/nyt')
-
-    # dummy_df = default_queries.copy() # This is where we read in our own query expansions
-    # dummy_df['query'] = 'some query'
-
-    # expanded_regular_queries = dummy_df
-    # expanded_news_queries = dummy_df
-
-    result_default = evaluation(dataset, index_ref, queries)
-    # result_expanded_regular = evaluation(dataset, expanded_regular_queries)
-    # result_expanded_news = evaluation(dataset, expanded_news_queries)
-
-    return result_default#, result_expanded_regular, result_expanded_news
+    return evaluation(dataset, index_ref, topics)
 
 def evaluation(dataset, index_ref, topics : pd.DataFrame) -> pd.DataFrame:
     tfidf = pt.BatchRetrieve(index_ref, wmodel="TF_IDF")
@@ -31,10 +17,3 @@ def evaluation(dataset, index_ref, topics : pd.DataFrame) -> pd.DataFrame:
         dataset.get_qrels(),
         eval_metrics=[nDCG @ 20],
     )
-
-if not pt.started():
-    pt.init()
-
-
-result = run_evaluation()
-print(result)

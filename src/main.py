@@ -1,6 +1,7 @@
 from geturl import GetURLs
 from preprocessing import download_all_documents, clean_all_documents
 from vectorizer import run_query_expansion
+from evaluation import run_evaluation
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -36,8 +37,8 @@ def expand_query(query_string, isNews : bool):
         print(url_list)
         page_list = download_all_documents(url_list=url_list)
         text_list = clean_all_documents(page_list)
-        for text in text_list:
-            print(len(text))
+        # for text in text_list:
+        #     print(len(text))
 
         output = run_query_expansion(text_list, processed_query)
         write_temporary_result(processed_query, output, isNews)
@@ -45,7 +46,7 @@ def expand_query(query_string, isNews : bool):
         output = temp_storage['news' if isNews else 'bing'][processed_query]
 
     result = query_string + ' ' + ' '.join(output)
-    print(result)
+    # print(result)
     return result
 
     # print("==================================================================================")
@@ -97,4 +98,11 @@ if __name__== "__main__" :
     bing_news_queries = create_expanded_queries(original_queries, isNews=True)
     store_result(bing_news_queries, 'bing_news.csv')
 
+    original_result = run_evaluation(original_queries)
+    bing_result = run_evaluation(bing_queries)
+    bing_news_result = run_evaluation(bing_news_queries)
+
+    print(original_result)
+    print(bing_result)
+    print(bing_news_result)
 
