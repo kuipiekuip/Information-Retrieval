@@ -5,7 +5,16 @@ from typing import List
 
 
 def download_all_documents(url_list : List[str]) -> List[requests.models.Response]:
-    return list(map(requests.get, url_list))
+    return list(map(download_document, url_list))
+
+def download_document(url : str) -> requests.models.Response:
+    response = ""
+    try:
+        response = requests.get(url)
+    except:
+        print("Exception: Connection Problem; skipping file")
+
+    return response
 
 def clean_all_documents(page_list : List[requests.models.Response]):
     return list(map(clean_document, page_list))
