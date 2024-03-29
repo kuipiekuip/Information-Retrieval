@@ -4,6 +4,9 @@ from vectorizer import run_query_expansion
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import pyterrier as pt
+import pandas as pd
+import os
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -17,25 +20,58 @@ def preprocess_query(query):
     filtered_text = ' '.join(filtered_query)
     return filtered_text
 
-def main(query_string):
-    original_query = {query_string}
-    url_list = GetURLs(query_string, 5, False)
+def expand_query(query_string, isNews : bool):
+    processed_query = preprocess_query(query_string)
+    # words = set(processed_query.split())
+    # query = {processed_query}
+    # print(original_query)
+
+    url_list = GetURLs(processed_query, 20, isNews)
     print(url_list)
     page_list = download_all_documents(url_list=url_list)
     text_list = clean_all_documents(page_list)
     for text in text_list:
         print(len(text))
-    output = run_query_expansion(text_list, original_query)
 
-    print("==================================================================================")
-    print(output)
+    output = run_query_expansion(text_list, processed_query)
+    result = query_string + ' '.join(output)
+    print(result)
+    return result
+
+    # print("==================================================================================")
+    # print(output)
+
+
+def create_expanded_queries(original_queries : pd.DataFrame, isNews : bool) -> pd.DataFrame:
+    df = original_queries.copy()
+    df['title'] = df[['title']].apply(lambda x: expand_query(x.values[0], isNews), axis=1)
+    return df
+
+def pre_process_queries(queries_raw: pd.DataFrame):
+    queries_raw.rename(columns={'title': 'query'}, inplace=True)
+    return queries_raw[['qid', 'query']].copy()
+
+def store_result(df : pd.DataFrame, file_path: str):
+    dir = 'topics/'
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    df.to_csv(dir + file_path, index=False)
+
+def load_result(file_path : str) -> pd.DataFrame:
+    dir = 'topics/'
+    return pd.read_csv(dir + file_path).astype(object)
 
 
 if __name__== "__main__" :
-    # is it correct that the query_string is just a string? Or should it be multiple strings?
-    query_string = ' a racket sport'
-    query_string = preprocess_query(query_string)
-    print(query_string)
-    words = set(query_string.split())
-    main(query_string=query_string)
+    if not pt.started():
+        pt.init()
+    dataset = pt.datasets.get_dataset('irds:nyt/trec-core-2017')
+    original_queries = pre_process_queries(dataset.get_topics())
     
+    bing_queries = create_expanded_queries(original_queries, isNews=False)
+    store_result(bing_queries, 'bing.csv')
+
+    bing_news_queries = create_expanded_queries(original_queries, isNews=True)
+    store_result(bing_news_queries, 'bing_news.csv')
+
+

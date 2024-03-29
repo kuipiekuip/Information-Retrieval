@@ -29,7 +29,7 @@ def evaluation(dataset, index_ref, topics : pd.DataFrame) -> pd.DataFrame:
         [tfidf, bm25],
         topics,
         dataset.get_qrels(),
-        eval_metrics=[RR @ 10, nDCG @ 20, MAP],
+        eval_metrics=[nDCG @ 20],
     )
 
 if not pt.started():
