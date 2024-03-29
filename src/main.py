@@ -44,7 +44,7 @@ def expand_query(query_string, isNews : bool):
 
 def create_expanded_queries(original_queries : pd.DataFrame, isNews : bool) -> pd.DataFrame:
     df = original_queries.copy()
-    df['title'] = df[['title']].apply(lambda x: expand_query(x.values[0], isNews), axis=1)
+    df['query'] = df[['query']].apply(lambda x: expand_query(x.values[0], isNews), axis=1)
     return df
 
 def pre_process_queries(queries_raw: pd.DataFrame):
