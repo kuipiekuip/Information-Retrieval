@@ -70,34 +70,26 @@ def create_expanded_queries(original_queries : pd.DataFrame, isNews : bool) -> p
     return df
 
 def pre_process_queries(queries_raw: pd.DataFrame):
-    queries_raw.rename(columns={'title': 'query'}, inplace=True)
     return queries_raw[['qid', 'query']].copy()
-
-def store_result(df : pd.DataFrame, file_path: str):
-    dir = 'topics/'
-    if not os.path.exists(dir):
-        os.makedirs(dir)
-    df.to_csv(dir + file_path, index=False)
-
-def load_result(file_path : str) -> pd.DataFrame:
-    dir = 'topics/'
-    return pd.read_csv(dir + file_path).astype(object)
-
 
 if __name__== "__main__" :
     if not pt.started():
         pt.init()
-    dataset = pt.datasets.get_dataset('irds:nyt/trec-core-2017')
+
+    # Retrieve the original queries
+    dataset = pt.datasets.get_dataset('irds:beir/trec-covid')
     original_queries = pre_process_queries(dataset.get_topics())
 
+    # Load the previous results
     temp_storage = load_temporary_result()
     
+    # Create the expanded queries for Bing Search
     bing_queries = create_expanded_queries(original_queries, isNews=False)
-    store_result(bing_queries, 'bing.csv')
 
+    # Create the expanded queries for News Search
     bing_news_queries = create_expanded_queries(original_queries, isNews=True)
-    store_result(bing_news_queries, 'bing_news.csv')
 
+    # Run the evaluation
     original_result = run_evaluation(original_queries)
     bing_result = run_evaluation(bing_queries)
     bing_news_result = run_evaluation(bing_news_queries)
