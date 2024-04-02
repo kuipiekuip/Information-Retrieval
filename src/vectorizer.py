@@ -207,9 +207,9 @@ def sort_by_correlation(
 
     # Sorting terms by their scores
     sorted_terms = sorted(correlation_scores, key=lambda x: x[1], reverse=True)
-    # print(sorted_terms)
-    # Returning the sorted list of terms without scores
-    return [term for term, _ in sorted_terms]
+    sorted_terms_dict = {term: score for term, score in sorted_terms}
+
+    return sorted_terms_dict
 
 
 def run_query_expansion(corpus, original_query, M=100, k=10, l=100, r=5):
