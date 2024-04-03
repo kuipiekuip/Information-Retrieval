@@ -76,10 +76,10 @@ if __name__== "__main__" :
     temp_storage = load_temporary_result()
     
     # Create the expanded queries for Bing Search
-    bing_queries = create_expanded_queries(original_queries, isNews=False, numTerms = 5)
+    bing_queries = create_expanded_queries(original_queries, isNews=False, numTerms = 15)
 
     # Create the expanded queries for News Search
-    bing_news_queries = create_expanded_queries(original_queries, isNews=True, numTerms = 5)
+    bing_news_queries = create_expanded_queries(original_queries, isNews=True, numTerms = 15)
 
     # Run the evaluation
     original_result = run_evaluation(original_queries)
