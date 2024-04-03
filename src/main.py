@@ -26,31 +26,23 @@ def preprocess_query(query):
     filtered_text = ' '.join(filtered_query)
     return filtered_text
 
-def expand_query(query_string, isNews : bool):
+def expand_query(query_string, isNews : bool, numTerms : int):
     processed_query = preprocess_query(query_string)
-    # words = set(processed_query.split())
-    # query = {processed_query}
-    # print(original_query)
 
     if processed_query not in temp_storage['news' if isNews else 'bing']:
         url_list = GetURLs(processed_query, 20, isNews)
         print(url_list)
         page_list = download_all_documents(url_list=url_list)
         text_list = clean_all_documents(page_list)
-        # for text in text_list:
-        #     print(len(text))
 
         output = run_query_expansion(text_list, processed_query)
         write_temporary_result(processed_query, output, isNews)
     else:
         output = temp_storage['news' if isNews else 'bing'][processed_query]
 
-    result = query_string + ' ' + ' '.join(output)
-    # print(result)
-    return result
+    result = query_string + ' ' + ' '.join([*output][0:numTerms])
 
-    # print("==================================================================================")
-    # print(output)
+    return result
 
 def write_temporary_result(query : str, output, isNews : bool):
     temp_storage['news' if isNews else 'bing'][query] = output
@@ -64,9 +56,9 @@ def load_temporary_result():
         temp_storage = json.load(file)
     return temp_storage
 
-def create_expanded_queries(original_queries : pd.DataFrame, isNews : bool) -> pd.DataFrame:
+def create_expanded_queries(original_queries : pd.DataFrame, isNews : bool, numTerms : int) -> pd.DataFrame:
     df = original_queries.copy()
-    df['query'] = df[['query']].apply(lambda x: expand_query(x.values[0], isNews), axis=1)
+    df['query'] = df[['query']].apply(lambda x: expand_query(x.values[0], isNews, numTerms), axis=1)
     return df
 
 def pre_process_queries(queries_raw: pd.DataFrame):
@@ -84,10 +76,10 @@ if __name__== "__main__" :
     temp_storage = load_temporary_result()
     
     # Create the expanded queries for Bing Search
-    bing_queries = create_expanded_queries(original_queries, isNews=False)
+    bing_queries = create_expanded_queries(original_queries, isNews=False, numTerms = 5)
 
     # Create the expanded queries for News Search
-    bing_news_queries = create_expanded_queries(original_queries, isNews=True)
+    bing_news_queries = create_expanded_queries(original_queries, isNews=True, numTerms = 5)
 
     # Run the evaluation
     original_result = run_evaluation(original_queries)

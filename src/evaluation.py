@@ -3,8 +3,8 @@ import pandas as pd
 from pyterrier.measures import RR, nDCG, MAP
 
 def run_evaluation(topics : pd.DataFrame):
-    dataset = pt.datasets.get_dataset('irds:nyt/trec-core-2017')
-    index_ref = pt.IndexRef.of('./indices/nyt')
+    dataset = pt.datasets.get_dataset('irds:beir/trec-covid')
+    index_ref = pt.IndexRef.of('./indices/cord19_fulltext')
     return evaluation(dataset, index_ref, topics)
 
 def evaluation(dataset, index_ref, topics : pd.DataFrame) -> pd.DataFrame:
@@ -15,5 +15,5 @@ def evaluation(dataset, index_ref, topics : pd.DataFrame) -> pd.DataFrame:
         [tfidf, bm25],
         topics,
         dataset.get_qrels(),
-        eval_metrics=[nDCG @ 20],
+        eval_metrics=[nDCG @ 5, nDCG @ 10, nDCG @ 100],
     )
