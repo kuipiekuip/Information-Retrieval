@@ -40,7 +40,7 @@ def expand_query(query_string, isNews : bool, numTerms : int):
     else:
         output = temp_storage['news' if isNews else 'bing'][processed_query]
 
-    result = query_string + ' ' + ' '.join([*output][0:numTerms])
+    result = query_string + ' ' + ' '.join([*output])
 
     return result
 
