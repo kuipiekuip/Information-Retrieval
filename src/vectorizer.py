@@ -212,7 +212,7 @@ def sort_by_correlation(
     return sorted_terms_dict
 
 
-def run_query_expansion(corpus, original_query, M=100, k=10, l=100, r=5):
+def run_query_expansion(corpus, original_query, M=100, k=20, l=100, r=5):
     # Compute the top M terms using TF-IDF
     top_m_terms = compute_tfidf_and_select_top_terms(corpus, M)
     # Calculate custom weights for terms in each document
