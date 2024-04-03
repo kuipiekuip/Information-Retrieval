@@ -2,7 +2,7 @@ import requests
 import json
 import os
 
-subscription_key = "4e4ba1ec06b0413c92afe897d6fe4d3a"
+subscription_key = "YOUR_SUBSCRIPTION_KEY"
 
 endpoint1 = "https://api.bing.microsoft.com/v7.0/search" # normal search
 endpoint2 = "https://api.bing.microsoft.com/v7.0/news/search" # news search
