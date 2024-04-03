@@ -9,7 +9,7 @@ def download_all_documents(url_list : List[str]) -> List[str]:
 
 def download_document(url : str) -> requests.models.Response:
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
     except:
         print("Exception: Connection Problem; skipping file")
         return ""

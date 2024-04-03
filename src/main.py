@@ -35,7 +35,7 @@ def expand_query(query_string, isNews : bool, numTerms : int):
         page_list = download_all_documents(url_list=url_list)
         text_list = clean_all_documents(page_list)
 
-        output = run_query_expansion(text_list, processed_query)
+        output = run_query_expansion(text_list, processed_query, k=numTerms)
         write_temporary_result(processed_query, output, isNews)
     else:
         output = temp_storage['news' if isNews else 'bing'][processed_query]
