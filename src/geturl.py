@@ -33,7 +33,11 @@ def GetURLs(query : str, N : int, flag : bool):
         url = endpoint1
 
     headers = { "Ocp-Apim-Subscription-Key" : subscription_key }
-    params = { 'q': query, 'mkt': mkt, 'count': N}
+    
+    if flag:
+        params = { 'q': query, 'mkt': mkt, 'count': N, 'freshness': 'Month'}
+    else:
+        params = { 'q': query, 'mkt': mkt, 'count': N}
 
     # Call the API
     try:
