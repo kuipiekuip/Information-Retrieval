@@ -29,6 +29,7 @@ def preprocess_query(query):
 def expand_query(query_string, isNews : bool, numTerms : int):
     processed_query = preprocess_query(query_string)
 
+    # Check whether a query is already processed, if not process it else retrieve it from the temporary storage
     if processed_query not in temp_storage['news' if isNews else 'bing']:
         url_list = GetURLs(processed_query, 20, isNews)
         print(url_list)
