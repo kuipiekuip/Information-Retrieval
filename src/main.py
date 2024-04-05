@@ -86,7 +86,7 @@ if __name__== "__main__" :
     bing_result = run_evaluation(bing_queries)
     bing_news_result = run_evaluation(bing_news_queries)
 
-    print(original_result)
-    print(bing_result)
-    print(bing_news_result)
+    print("Original result: ", original_result)
+    print("Bing result: ", bing_result)
+    print("Bing News result: ", bing_news_result)
 
