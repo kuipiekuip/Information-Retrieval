@@ -145,7 +145,6 @@ def k_nearest_neighbors(Cexp, terms, similarity_matrix, k, l, r=5):
 
         # Sort Cexp w.r.t t using cosine similarity score
         t_index = term_index_map[t]
-        # print(t_index)
         Cexp.sort(
             key=lambda term: similarity_matrix[term_index_map[term[0]], t_index],
             reverse=True,
@@ -223,13 +222,9 @@ def run_query_expansion(corpus, original_query, M=100, k=20, l=100, r=5):
     terms, similarity_matrix = compute_cosine_similarities(term_vectors)
     # Run the k-Nearest Neighbors algorithm to select expansion terms
     knn_scores = k_nearest_neighbors(top_m_terms, terms, similarity_matrix, k, l, r)
-    # print(knn_scores)
     # Extract the terms from the k-NN scores
     knn_terms = {term for term, score in knn_scores}
-    # print("k", knn_terms)
-    # print("o", original_query)
-    # print("d", document_term_weights)
-    # print("k", knn_terms)
+
     # Perform query expansion using the k-NN terms and the original query terms
     sorted_candidate_terms = sort_by_correlation(
         knn_terms, original_query, document_term_weights
@@ -246,31 +241,3 @@ if __name__ == "__main__":
     ]
 
     print(run_query_expansion(corpus=documents))
-
-    # tw = calculate_custom_weights(documents)
-
-    # term_vectors = create_term_vectors(tw)
-    # terms, similarity_matrix = compute_cosine_similarities(term_vectors)
-
-    # knn_scores = k_nearest_neighbors(
-    #     compute_tfidf_and_select_top_terms(documents),
-    #     terms,
-    #     similarity_matrix,
-    #     10,
-    #     100,
-    #     r=5,
-    # )
-
-    # print(knn_scores)  # Alg. 1 of the literature work
-
-    # knn_terms = {term for term, score in knn_scores}
-
-    # print(knn_terms)
-
-    # candidate_terms_set = knn_terms  # knn terms to be weighted
-    # reference_terms_set = {"novel", "fables", "alice"}  # Original Query Set
-
-    # sorted_candidate_terms = sort_by_correlation(
-    #     candidate_terms_set, reference_terms_set, tw
-    # )
-    # print(sorted_candidate_terms)

@@ -44,4 +44,3 @@ if __name__== "__main__" :
 
     page_list = download_all_documents(url_list)
     text_list = clean_all_documents(page_list)
-    print(text_list)
